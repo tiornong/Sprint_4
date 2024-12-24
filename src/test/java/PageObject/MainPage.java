@@ -3,7 +3,6 @@ package PageObject;
 
 import Constants.Constants;
 
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -11,9 +10,9 @@ import org.openqa.selenium.WebElement;
 
 
 public class MainPage {
+
     private final WebDriver driver;
 
-    //TODO: doc this, maybe change to findElements??
     private final By[] FAQPoints = new By[Constants.FAQ_LENGTH];
     private final By[] FAQTexts = new By[Constants.FAQ_LENGTH];
 
@@ -32,13 +31,12 @@ public class MainPage {
     // Локатор для кнопки принятия кук
     private final By cookieAcceptanceButton = By.xpath(".//button[starts-with(@class, 'App_CookieButton')]");
 
-
     public MainPage(WebDriver driver) {
         this.driver = driver;
         updateFAQLocators();
     }
 
-    /** Этот метод добавляет в соответствующие переменные локаторы на ВСЕ пункты/содержимое пунктов FAQ по порядку.*/
+    /** Этот метод добавляет в соответствующие переменные локаторы на все пункты/содержимое пунктов FAQ по порядку при инициализации PO*/
     // Делаю приватным, так как, я считаю, что он не должен вызываться никак иначе, как при инициализации РО.
      private void updateFAQLocators() {
         for (int i = 1; i <= Constants.FAQ_LENGTH; i++){

@@ -3,7 +3,6 @@ package PageObject;
 
 import Constants.Constants;
 
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -11,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class OrderPage {
+
     private final WebDriver driver;
 
     // Локатор для поля Имя в первом шаге Формы заказа
@@ -34,8 +34,6 @@ public class OrderPage {
     // Локатор для меню выбора станции метров в первом шаге Формы заказа
     private final By metroStationMenu = By.xpath(".//input[@placeholder='* Станция метро']");
 
-    // Локатор для выбора
-
     // Локатор для поля Телефон в первом шаге Формы заказа
     private final By phoneInput = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']");
 
@@ -51,7 +49,6 @@ public class OrderPage {
     // Локатор для меню выбора срока аренды во втором шаге Формы заказа
     private final By rentalPeriodMenu = By.xpath(".//div[@class='Dropdown-control']");
 
-    //TODO: findElements maybe?
     // Список локаторов для всех сроков аренды самоката во втором шаге Формы заказа
     private final By[] rentalOptions = new By[Constants.RENTAL_OPTIONS];
 
@@ -63,7 +60,6 @@ public class OrderPage {
 
     // Локатор для уведомления об успешном совершении заказа
     private final By orderConfirmedWindow = By.xpath(".//div[text()='Заказ оформлен']");
-
 
     public OrderPage(WebDriver driver) {
         this.driver = driver;
@@ -113,7 +109,7 @@ public class OrderPage {
 
           Так же, возможна ситуация с варьирующимся во время заказа списком станций (на некоторые станции по каким-либо причинам доставка может отключиться),
           так что здесь имеет смысл искать локатор станции только при открытии меню, в то время, как ЧаВо гораздо более стабильная сущность (к тому же меньшей длины),
-          так что локаторы для него мы можем сохранить единожды при запуске драйвера
+          так что локаторы для него мы можем сохранить единожды при инициализации MainPage
         */
 
         // Для повышения читаемости ожидания -- лесенка

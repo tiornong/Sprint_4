@@ -1,5 +1,6 @@
 package Constants;
 
+
 public class Constants {
     public static final int FAQ_LENGTH = 8;
     public static final int RENTAL_OPTIONS = 7;

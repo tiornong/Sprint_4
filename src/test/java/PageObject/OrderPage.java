@@ -1,31 +1,68 @@
 package PageObject;
 
+
 import Constants.Constants;
-import Util.Locator;
+
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+
 public class OrderPage {
     private final WebDriver driver;
-    private final By nameInput = Locator.nameInput();
-    private final By nameInputError = Locator.nameInputError();
-    private final By surnameInput = Locator.surnameInput();
-    private final By surnameInputError = Locator.surnameInputError();
-    private final By addressInput = Locator.addressInput();
-    private final By addressInputError = Locator.addressInputError();
-    private final By metroStationMenu = Locator.metroStationMenu();
-    private final By phoneInput = Locator.phoneInput();
-    private final By phoneInputError = Locator.phoneInputError();
-    private final By nextButtonFirstOrderForm = Locator.nextButtonFirstOrderForm();
-    private final By deliveryDateInput = Locator.deliveryDateInput();
-    private final By rentalPeriodMenu = Locator.rentalPeriodMenu();
+
+    // Локатор для поля Имя в первом шаге Формы заказа
+    private final By nameInput = By.xpath(".//input[@placeholder='* Имя']");
+
+    // Локатор для сообщения об ошибке при вводе некорректного значения в поле Имя в первом шаге Формы заказа
+    private final By nameInputError = By.xpath(".//div[text()='Введите корректное имя']");
+
+    // Локатор для поля Фамилия в первом шаге Формы заказа
+    private final By surnameInput = By.xpath(".//input[@placeholder='* Фамилия']");
+
+    // Локатор для сообщения об ошибке при вводе некорректного значения в поле Фамилия в первом шаге Формы заказа
+    private final By surnameInputError = By.xpath(".//div[text()='Введите корректную фамилию']");
+
+    // Локатор для поля Адрес в первом шаге Формы заказа
+    private final By addressInput = By.xpath(".//input[@placeholder='* Адрес: куда привезти заказ']");
+
+    // Локатор для сообщения об ошибке при вводе некорректного значения в поле Фамилия в первом шаге Формы заказа
+    private final By addressInputError = By.xpath(".//div[text()='Введите корректный адрес']");
+
+    // Локатор для меню выбора станции метров в первом шаге Формы заказа
+    private final By metroStationMenu = By.xpath(".//input[@placeholder='* Станция метро']");
+
+    // Локатор для выбора
+
+    // Локатор для поля Телефон в первом шаге Формы заказа
+    private final By phoneInput = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']");
+
+    // Локатор для сообщения об ошибке при вводе некорректного значения в поле Телефон в первом шаге Формы заказа
+    private final By phoneInputError = By.xpath(".//div[text()='Введите корректный адрес']");
+
+    // Локатор для кнопки перехода на второй шаг Формы заказа
+    private final By nextButtonFirstOrderForm = By.xpath(".//button[text()='Далее']");
+
+    // Локатор для поля ввода Дата доставки во втором шаге Формы заказа
+    private final By deliveryDateInput = By.xpath(".//input[@placeholder='* Когда привезти самокат']");
+
+    // Локатор для меню выбора срока аренды во втором шаге Формы заказа
+    private final By rentalPeriodMenu = By.xpath(".//div[@class='Dropdown-control']");
+
+    //TODO: findElements maybe?
+    // Список локаторов для всех сроков аренды самоката во втором шаге Формы заказа
     private final By[] rentalOptions = new By[Constants.RENTAL_OPTIONS];
-    private final By finalOrderButton = Locator.finalOrderButton();
-    private final By confirmOrderButton = Locator.confirmOrderButton();
-    private final By orderConfirmedWindow = Locator.orderConfirmedWindow();
+
+    // Локатор для кнопки завершения заполнения Формы заказа
+    private final By finalOrderButton = By.xpath(".//div[starts-with(@class, 'Order_Buttons')]/button[text()='Заказать']");
+
+    // Локатор для кнопки подтверждения совершения заказа
+    private final By confirmOrderButton = By.xpath(".//button[text()='Да']");
+
+    // Локатор для уведомления об успешном совершении заказа
+    private final By orderConfirmedWindow = By.xpath(".//div[text()='Заказ оформлен']");
 
 
     public OrderPage(WebDriver driver) {
@@ -35,7 +72,7 @@ public class OrderPage {
     // Аналогично MainPage.updateFAQLocators, но этот используется в OrderPage.nextButtonFirstOrderFormClick
     private void updateRentalOptionsLocators() {
         for (int i = 0; i < Constants.RENTAL_OPTIONS; i++){
-            this.rentalOptions[i] = Locator.rentalPeriodOption(i);
+            this.rentalOptions[i] = By.xpath(String.format(".//div[@role='option'][%d]", i));
         }
     }
 
@@ -67,11 +104,23 @@ public class OrderPage {
         driver.findElement(metroStationMenu).click();
     }
 
-    // Сначала открываем меню выбора станции, затем выбираем, после того, как убеждаемся в появлении станций на экране
+    /** Происходит открытие меню выбора станции, затем выбор станции, соответствующей metroStationIndex */
     public void metroStationInput(int metroStationIndex) {
         metroStationMenuClick();
-        new WebDriverWait(driver, 3).until(ExpectedConditions.visibilityOfElementLocated(Locator.metroStationInput(0)));
-        driver.findElement(Locator.metroStationInput(metroStationIndex)).click();
+
+        /*
+          Выносить metroStationIndex как By[] в поля класса нет смысла из-за потенциального размера этого массива (более 200 элементов).
+
+          Так же, возможна ситуация с варьирующимся во время заказа списком станций (на некоторые станции по каким-либо причинам доставка может отключиться),
+          так что здесь имеет смысл искать локатор станции только при открытии меню, в то время, как ЧаВо гораздо более стабильная сущность (к тому же меньшей длины),
+          так что локаторы для него мы можем сохранить единожды при запуске драйвера
+        */
+
+        // Для повышения читаемости ожидания -- лесенка
+        new WebDriverWait(driver, 3)
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath(String.format(".//li[@data-index='%d']/button", metroStationIndex))));
+        driver.findElement(By.xpath(String.format(".//li[@data-index='%d']/button", metroStationIndex))).click();
     }
 
     public void phoneInput(String phone) {
@@ -86,15 +135,16 @@ public class OrderPage {
         driver.findElement(nextButtonFirstOrderForm).click();
     }
 
+    /** Метод для ввода даты доставки в виде строки. После ввода происходит нажатие в пустоту для исчезновения всплывающего календаря. */
     public void orderDateInput(String orderDate) {
         driver.findElement(deliveryDateInput).sendKeys(orderDate);
+
         // Убираем всплывающий календарь
         driver.findElement(By.tagName("body")).click();
     }
 
-
-
-    // Одновременно обновляем список с локаторами пунктов выпадающего списка.
+    /** Метод для открытия меню выбора срока аренды.
+     * Одновременно обновляем список с локаторами пунктов выпадающего списка. */
     public void rentalPeriodMenuClick() {
         driver.findElement(rentalPeriodMenu).click();
         updateRentalOptionsLocators();
